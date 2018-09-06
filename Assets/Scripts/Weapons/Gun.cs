@@ -5,7 +5,7 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
 
-    public GameObject boahkhsahgkhsak;
+    public GameObject bullet;
     public Transform spawnPoint;
     public KeyCode fireButton;
 
@@ -22,7 +22,7 @@ public class Gun : MonoBehaviour
         if (Input.GetKeyDown(fireButton))
         {
             // Instantiate a new bullet from prefab "bullet"
-            GameObject clone = Instantiate(boahkhsahgkhsak, transform.position, transform.rotation);
+            GameObject clone = Instantiate(bullet, transform.position, transform.rotation);
             // Get the component from the new bullet
             Bullet newBullet = clone.GetComponent<Bullet>();
             // Tell the bullet to Fire()

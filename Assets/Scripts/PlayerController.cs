@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public bool rotateToMainCamera = false;
+    public bool rotateWeapon = false;
     public Transform weapon;
 
     public float moveSpeed = 5f;
@@ -14,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float rayDistance = 1f;
     public LayerMask ignoreLayers;
 
-    private bool isGrounded = true;
+    private bool isGrounded = false;
 
     // Implement this OnDrawGizmosSelected if you want to draw gizmos only if the object is selected
     private void OnDrawGizmos()
@@ -29,7 +30,7 @@ public class PlayerController : MonoBehaviour
         Ray groundRay = new Ray(transform.position, Vector3.down);
         RaycastHit hit;
         // Casts a line beneath the player
-        if (Physics.Raycast(groundRay, out hit, rayDistance)) // out = outside of this statement
+        if (Physics.Raycast(groundRay, out hit, rayDistance, ~ignoreLayers)) // out = outside of this statement
         { // These {} are called "scope"
             // Return true if grounded
             return true; // any code right below this would not run if the if statement above ended with a ;
@@ -72,8 +73,12 @@ public class PlayerController : MonoBehaviour
         //}
 
         Quaternion playerRotation = Quaternion.AngleAxis(camEuler.y, Vector3.up);
-        Quaternion weaponRotation = Quaternion.AngleAxis(camEuler.x, Vector3.right);
-        weapon.localRotation = weaponRotation;
         transform.rotation = playerRotation;
+
+        if (rotateWeapon)
+        {
+            Quaternion weaponRotation = Quaternion.AngleAxis(camEuler.x, Vector3.right);
+            weapon.localRotation = weaponRotation;
+        }             
     }
 }
