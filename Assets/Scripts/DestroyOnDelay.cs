@@ -9,7 +9,7 @@ public class DestroyOnDelay : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Destroy(gameObject, delay);
+
     }
 
     // Update is called once per frame

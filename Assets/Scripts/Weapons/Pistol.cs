@@ -12,7 +12,7 @@ public class Pistol : Weapon
             // Instantiate a new bullet from prefab "bullet"
             GameObject clone = Instantiate(projectile, spawnPoint.position, spawnPoint.rotation);
             // Get the component from the new bullet
-            Bullet newBullet = clone.GetComponent<Bullet>();
+            Projectile newBullet = clone.GetComponent<Projectile>();
             // Tell the bullet to Fire()
             newBullet.Fire(transform.forward);
         }
