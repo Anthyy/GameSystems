@@ -8,7 +8,7 @@ public class Incendiary : Projectile
 
     public override void OnCollisionEnter(Collision col)
     {
-        Enemy E = col.collider.GetComponent<Enemy>();
+        Enemy e = col.collider.GetComponent<Enemy>();
         if (e)
         {
             // Disable bullet effects

@@ -2,20 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+/*
+ * 1). Weapon Cycke
+ * 2). Interaction System
+ * */
 public class PlayerController : MonoBehaviour
 {
     public bool rotateToMainCamera = false;
-    public bool rotateWeapon = false;
-    public Weapon currentWeapon;
-
+    public bool rotateWeapon = false;    
     public float moveSpeed = 5f;
     public float jumpHeight = 10f;
     public Rigidbody rigid;
     public float rayDistance = 1f;
     public LayerMask ignoreLayers;
+    public Weapon[] weapons;
 
+    private Weapon currentWeapon;
     private bool isGrounded = false;
+    private Vector3 moveDir;
+    private bool isJumping;
+    private Interactable interactObject;
 
     // Implement this OnDrawGizmosSelected if you want to draw gizmos only if the object is selected
     private void OnDrawGizmos()
@@ -23,6 +29,12 @@ public class PlayerController : MonoBehaviour
         Ray groundRay = new Ray(transform.position, Vector3.down); // telling the ray to go down
         Gizmos.color = Color.red;
         Gizmos.DrawLine(groundRay.origin, groundRay.origin + groundRay.direction * rayDistance);
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        interactObject = other.GetComponent<Interactable>();
     }
 
     bool IsGrounded()
@@ -40,20 +52,8 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        // If fire button is pressed AND weapon is allowed to fire
-        if (Input.GetButton("Fire1"))
-        {
-            // Fire the weapon
-            currentWeapon.Attack();
-        }
-
-        float inputH = Input.GetAxis("Horizontal") * moveSpeed;
-        float inputV = Input.GetAxis("Vertical") * moveSpeed;
-
-        Vector3 moveDir = new Vector3(inputH, 0f, inputV); // inputH = x, 0f = y, inputV = Z (y is 0 because you don't want up & down movement)
-      
+    private void Update()
+    {                  
         // Get the euler angles of camera
         Vector3 camEuler = Camera.main.transform.eulerAngles;
 
@@ -66,9 +66,10 @@ public class PlayerController : MonoBehaviour
 
         Vector3 force = new Vector3(moveDir.x, rigid.velocity.y, moveDir.z);
 
-        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded()) // or (Input.Getbutton("Jump"))
+        if(isJumping && IsGrounded())
         {
-            force.y = jumpHeight; 
+            force.y = jumpHeight;
+            isJumping = false;
         }
 
         rigid.velocity = force;
@@ -87,5 +88,66 @@ public class PlayerController : MonoBehaviour
             Quaternion weaponRotation = Quaternion.AngleAxis(camEuler.x, Vector3.right);
             currentWeapon.transform.localRotation = weaponRotation;
         }             
+    }
+
+    private void DisableAllWeapons()
+    {
+        // Loop through every weapon
+        foreach (Weapon weapon in weapons)
+        {
+            // Deactivate weapon's GameObject
+            weapon.gameObject.SetActive(false);
+        }
+     
+    }
+
+    // Selects and switches out the current weapon
+    public void SelectWeapon(int index)
+    {
+        // Check index is within range of weapons array
+        // is within range i >= 0 && i < length
+        // is not within range i < 0 && i >= length
+        if (index < 0 || index >= weapons.Length)
+            return;
+
+        // DisableAllWeapons
+        DisableAllWeapons();
+
+        // Enable weapon at index
+        weapons[index].gameObject.SetActive(true);
+
+        // Set the currentWeapon
+        currentWeapon = weapons[index];
+    }
+
+    public void Move (float inputH, float inputV)
+    {
+        moveDir = new Vector3(inputH, 0f, inputV);
+        moveDir *= moveSpeed;
+    }
+
+    public void Jump()
+    {
+        isJumping = true;
+    }
+
+    public void Attack()
+    {      
+        // If fire button is pressed AND weapon is allowed to fire
+        if (Input.GetButton("Fire1"))
+        {
+            // Fire the weapon
+            currentWeapon.Attack();
+        }
+    }
+
+    public void Interact()
+    {
+        // If interactable is found
+        if (interactObject)
+        {
+            // Run interact
+            interactObject.Interact();
+        }
     }
 }
