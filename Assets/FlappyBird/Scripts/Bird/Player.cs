@@ -34,6 +34,16 @@ namespace FlappyBird
                 rBody.AddForce(new Vector2(0, upForce), ForceMode2D.Impulse);
             }
         }
+
+        private void OnTriggerEnter2D(Collider2D col)
+        {
+            GameManager.Instance.AddScore(1);
+        }
+
+        private void OnCollisionEnter2D(Collision2D col)
+        {
+            GameManager.Instance.GameOver();
+        }
     } 
 }
 
