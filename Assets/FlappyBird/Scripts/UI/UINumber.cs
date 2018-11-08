@@ -13,8 +13,8 @@ namespace FlappyBird
         public Vector3 standbyPos = new Vector3(-15, 15); // Position offscreen for standby
         public int maxDigits = 5; // The amount of digits to store offscreen for reuse
 
-        private GameObject[] scoreTextPool;
-        private int[] digits;
+        public GameObject[] scoreTextPool;
+        public int[] digits;
 
         public int Value 
         {
